@@ -9,21 +9,39 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.function.Consumer;
 
 @Slf4j
 class MemberV1Test {
 
     @Test
     void helloJpa() {
+        template(this::hello);
+    }
+
+    @Test
+    void persistenceContextFindInCache() {
+        template(this::findInCache);
+    }
+
+    @Test
+    void persistenceContextFindInDatabase() {
+        template(this::findInDatabase);
+    }
+
+    @Test
+    void equals() {
+        template(this::equals);
+    }
+
+    private void template(Consumer<EntityManager> consumer) {
         EntityManagerFactory factory = Persistence.createEntityManagerFactory("jpabook");
         EntityManager manager = factory.createEntityManager();
         EntityTransaction transaction = manager.getTransaction();
 
         try {
             transaction.begin();
-            logic(manager);
+            consumer.accept(manager);
             transaction.commit();
         } catch (Exception e) {
             log.error("{}", e);
@@ -32,10 +50,9 @@ class MemberV1Test {
             manager.close();
         }
         factory.close();
-
     }
 
-    private static void logic(EntityManager manager) {
+    private void hello(EntityManager manager) {
         MemberV1 member = new MemberV1();
         member.setId("id1");
         member.setUsername("name1");
@@ -61,5 +78,51 @@ class MemberV1Test {
 
         // delete
         manager.remove(member);
+    }
+
+    private void findInCache(EntityManager manager) {
+        MemberV1 member = new MemberV1();
+        member.setId("id1");
+        member.setUsername("name1");
+        member.setAge(20);
+
+        // insert
+        manager.persist(member);
+
+        // select
+        MemberV1 findMember = manager.find(MemberV1.class, "id1");
+        log.info("findMember: {}", findMember);
+    }
+
+    private void findInDatabase(EntityManager manager) {
+        MemberV1 member = new MemberV1();
+        member.setId("id1");
+        member.setUsername("name1");
+        member.setAge(20);
+
+        // insert
+        manager.persist(member);
+
+        // select
+        MemberV1 findMember = manager.find(MemberV1.class, "id2");
+        log.info("findMember: {}", findMember);
+    }
+
+    private void equals(EntityManager manager) {
+        MemberV1 member = new MemberV1();
+        member.setId("id1");
+        member.setUsername("name1");
+        member.setAge(20);
+
+        // insert
+        manager.persist(member);
+
+        // select
+        MemberV1 member1 = manager.find(MemberV1.class, "id1");
+        MemberV1 member2 = manager.find(MemberV1.class, "id1");
+
+        log.info("member1: {}", member1.toString());
+        log.info("member2: {}", member2.toString());
+        log.info("member1 == member2: {}", member1 == member2);
     }
 }
