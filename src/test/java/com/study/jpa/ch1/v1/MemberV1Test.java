@@ -1,18 +1,30 @@
 package com.study.jpa.ch1.v1;
 
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.ConstraintViolationException;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
+import javax.persistence.*;
 
 import java.util.List;
 import java.util.function.Consumer;
 
 @Slf4j
 class MemberV1Test {
+
+    EntityManagerFactory factory;
+
+    @BeforeEach
+    void init() {
+        factory = Persistence.createEntityManagerFactory("jpabook");
+    }
+    @AfterEach
+    void close() {
+        factory.close();
+    }
 
     @Test
     void helloJpa() {
@@ -34,8 +46,29 @@ class MemberV1Test {
         template(this::equals);
     }
 
+    @Test
+    void dirtyCheckingThrowsException() {
+        template(this::insertMember1);
+        assertThrows(RollbackException.class, () -> template(this::updateMemberViolationFail)) ;
+    }
+
+    @Test
+    void dirtyCheckingSuccess() {
+        template(this::insertMember1);
+        template(this::updateMemberSuccess);
+    }
+
+    @Test
+    void writeBehind() {
+        template(this::writeBehind);
+    }
+
+    @Test
+    void removeFromPersistenceContext() {
+        template(this::removeFromPersistenceContext);
+    }
+
     private void template(Consumer<EntityManager> consumer) {
-        EntityManagerFactory factory = Persistence.createEntityManagerFactory("jpabook");
         EntityManager manager = factory.createEntityManager();
         EntityTransaction transaction = manager.getTransaction();
 
@@ -46,10 +79,10 @@ class MemberV1Test {
         } catch (Exception e) {
             log.error("{}", e);
             transaction.rollback();
+            throw e;
         } finally {
             manager.close();
         }
-        factory.close();
     }
 
     private void hello(EntityManager manager) {
@@ -124,5 +157,72 @@ class MemberV1Test {
         log.info("member1: {}", member1.toString());
         log.info("member2: {}", member2.toString());
         log.info("member1 == member2: {}", member1 == member2);
+    }
+
+    private void insertMember1(EntityManager manager) {
+        MemberV1 member = new MemberV1();
+        member.setId("id1");
+        member.setUsername("name1");
+        member.setAge(20);
+
+        // insert
+        manager.persist(member);
+    }
+
+    private void updateMemberViolationFail(EntityManager manager) {
+        MemberV1 member = new MemberV1();
+        member.setId("id1");
+        member.setUsername("name2");
+        member.setAge(21);
+
+        // insert 가 수행되어 violation fail
+        manager.persist(member);
+    }
+
+    private void updateMemberSuccess(EntityManager manager) {
+        MemberV1 member = manager.find(MemberV1.class, "id1");
+        member.setId("id1");
+//        member.setUsername("name2");
+        member.setAge(21);
+
+        // update
+        manager.persist(member);
+    }
+
+    private void writeBehind(EntityManager manager) {
+        MemberV1 member = new MemberV1();
+        member.setId("id1");
+        member.setUsername("name1");
+        member.setAge(20);
+
+        // insert
+        manager.persist(member);
+
+        // update
+        member.setAge(21);
+
+        // update
+        member.setAge(22);
+    }
+
+    private void removeFromPersistenceContext(EntityManager manager) {
+        MemberV1 member = new MemberV1();
+        member.setId("id1");
+        member.setUsername("name1");
+        member.setAge(20);
+
+        // insert
+        manager.persist(member);
+
+        // select
+        MemberV1 findMember1 = manager.find(MemberV1.class, "id1");
+        log.info("findMember1: {}", findMember1);
+
+        // delete
+        manager.remove(findMember1);
+
+        // select
+        MemberV1 findMember2 = manager.find(MemberV1.class, "id1");
+        log.info("findMember2: {}", findMember2);
     }
 }
