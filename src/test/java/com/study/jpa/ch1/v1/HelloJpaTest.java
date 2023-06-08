@@ -1,7 +1,6 @@
 package com.study.jpa.ch1.v1;
 
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,7 +12,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 @Slf4j
-class MemberV1Test {
+class HelloJpaTest {
 
     EntityManagerFactory factory;
 
