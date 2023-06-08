@@ -4,6 +4,7 @@
     <!--  EntityManagerFactory 생성 시 사용되는 persistence name -->
     <persistence-unit name="jpabook">
         <class>com.study.jpa.ch1.v1.MemberV1</class>
+        <class>com.study.jpa.ch1.v2.MemberV2</class>
 
         <properties>
             <!-- 필수 속성 -->
@@ -16,7 +17,7 @@
 <!--            <property name="hibernate.show_sql" value="true"/>-->
 <!--            <property name="hibernate.format_sql" value="true"/> &lt;!&ndash; prettify sql &ndash;&gt;-->
 <!--            <property name="hibernate.use_sql_comments" value="true"/> &lt;!&ndash; show sql comments &ndash;&gt;-->
-
+            
             <!-- for test only -->
             <property name="hibernate.hbm2ddl.auto" value="create" /> <!-- create table based on @Entity -->
 
