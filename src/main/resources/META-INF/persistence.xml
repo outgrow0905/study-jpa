@@ -5,19 +5,22 @@
     <persistence-unit name="jpabook">
         <class>com.study.jpa.ch1.v1.MemberV1</class>
         <class>com.study.jpa.ch1.v2.MemberV2</class>
+        <class>com.study.jpa.ch1.v2.BoardV2</class>
 
         <properties>
             <!-- 필수 속성 -->
             <property name="javax.persistence.jdbc.driver" value="com.p6spy.engine.spy.P6SpyDriver"/>
             <property name="javax.persistence.jdbc.user" value="sa"/>
             <property name="javax.persistence.jdbc.password" value=""/>
-            <property name="javax.persistence.jdbc.url" value="jdbc:p6spy:h2:mem://localhost/~/test"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:p6spy:h2:mem://localhost/~/test;MODE=MySQL"/>
 
-            <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
-<!--            <property name="hibernate.show_sql" value="true"/>-->
-<!--            <property name="hibernate.format_sql" value="true"/> &lt;!&ndash; prettify sql &ndash;&gt;-->
-<!--            <property name="hibernate.use_sql_comments" value="true"/> &lt;!&ndash; show sql comments &ndash;&gt;-->
-            
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
+            <property name="hibernate.id.new_generator_mappings" value="true" />
+            <!--            <property name="hibernate.show_sql" value="true"/>-->
+            <!--            <property name="hibernate.format_sql" value="true"/> &lt;!&ndash; prettify sql &ndash;&gt;-->
+            <!--            <property name="hibernate.use_sql_comments" value="true"/> &lt;!&ndash; show sql comments &ndash;&gt;-->
+
+
             <!-- for test only -->
             <property name="hibernate.hbm2ddl.auto" value="create" /> <!-- create table based on @Entity -->
 
