@@ -1,5 +1,6 @@
-package com.study.jpa.ch1.v2;
+package com.study.jpa.ch2.v1;
 
+import com.study.jpa.ch2.v1.MemberV2;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,8 +12,6 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import java.time.LocalDateTime;
 import java.util.function.Consumer;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 class MemberV2Test {

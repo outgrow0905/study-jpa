@@ -32,6 +32,8 @@ dependencies {
 
     implementation 'org.hibernate:hibernate-entitymanager:5.6.15.Final'
 
+    implementation 'mysql:mysql-connector-java:8.0.33'
+
     // parameter bind query log
     implementation 'p6spy:p6spy:3.9.1'
 }

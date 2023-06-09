@@ -1,4 +1,4 @@
-package com.study.jpa.ch1.v2;
+package com.study.jpa.ch2.v1;
 
 
 import lombok.Data;
@@ -29,7 +29,7 @@ public class MemberV2 {
     @Lob
     private String description;
 
-    enum RoleType {
+    public enum RoleType {
         USER, ADMIN
     }
 }
