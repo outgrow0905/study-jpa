@@ -9,6 +9,12 @@
         <class>com.study.jpa.ch2.v1.BoardV3</class>
         <class>com.study.jpa.ch2.v1.BoardV4</class>
 
+        <!-- app -->
+        <class>com.study.jpa.app.v1.ItemV1</class>
+        <class>com.study.jpa.app.v1.OrderV1</class>
+        <class>com.study.jpa.app.v1.OrderItemV1</class>
+        <class>com.study.jpa.app.v1.UserV1</class>
+
         <properties>
             <!-- 필수 속성 -->
             <property name="javax.persistence.jdbc.driver" value="com.p6spy.engine.spy.P6SpyDriver"/>
