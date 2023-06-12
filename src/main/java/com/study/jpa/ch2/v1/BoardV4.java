@@ -7,7 +7,7 @@ import javax.persistence.*;
 @Data
 @Entity
 @TableGenerator(
-        name = "BOARD_SEQ_GENERATOR",
+        name = "BOARD_SEQ_GENERATOR_V4",
         table = "MY_SEQUENCES",
         pkColumnValue = "BOARD_SEQ",
         allocationSize = 1
@@ -16,7 +16,7 @@ public class BoardV4 {
     @Id
     @GeneratedValue(
             strategy = GenerationType.TABLE,
-            generator = "BOARD_SEQ_GENERATOR"
+            generator = "BOARD_SEQ_GENERATOR_V4"
     )
     private int id;
     private String data;

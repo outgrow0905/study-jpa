@@ -8,12 +8,18 @@
         <class>com.study.jpa.ch2.v1.BoardV2</class>
         <class>com.study.jpa.ch2.v1.BoardV3</class>
         <class>com.study.jpa.ch2.v1.BoardV4</class>
+        <class>com.study.jpa.ch3.v1.PlayerV1</class>
+        <class>com.study.jpa.ch3.v1.TeamV1</class>
 
         <!-- app -->
         <class>com.study.jpa.app.v1.ItemV1</class>
         <class>com.study.jpa.app.v1.OrderV1</class>
         <class>com.study.jpa.app.v1.OrderItemV1</class>
         <class>com.study.jpa.app.v1.UserV1</class>
+        <class>com.study.jpa.app.v2.ItemV2</class>
+        <class>com.study.jpa.app.v2.OrderV2</class>
+        <class>com.study.jpa.app.v2.OrderItemV2</class>
+        <class>com.study.jpa.app.v2.UserV2</class>
 
         <properties>
             <!-- 필수 속성 -->
