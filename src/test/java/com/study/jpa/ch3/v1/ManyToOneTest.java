@@ -1,8 +1,7 @@
 package com.study.jpa.ch3.v1;
 
-import com.study.jpa.ch1.v1.MemberV1;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.util.Lists;
+import org.assertj.core.internal.Lists;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,10 +14,8 @@ import javax.persistence.Persistence;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @Slf4j
-class MappingTest {
+class ManyToOneTest {
 
     EntityManagerFactory factory;
 
@@ -62,6 +59,7 @@ class MappingTest {
 
         template(manager -> {
             TeamV1 team1 = manager.find(TeamV1.class, "team1");
+            log.info("team1: {}", team1);
             List<PlayerV1> players = team1.getPlayers();
             log.info("players: {}", players);
         });
@@ -218,6 +216,54 @@ class MappingTest {
             TeamV1 findTeam1 = manager.find(TeamV1.class, "team1");
             List<PlayerV1> players = findTeam1.getPlayers();
             log.info("size: {}", players.size());
+        });
+    }
+
+    @Test
+    void findFail() {
+        template(manager -> {
+            TeamV1 team = new TeamV1();
+            team.setId("team1");
+            team.setName("team Seoul");
+            manager.persist(team);
+
+            PlayerV1 player1 = new PlayerV1();
+            player1.setId("player1");
+            player1.setTeam(team);
+            player1.setName("name1");
+            manager.persist(player1);
+
+            PlayerV1 player2 = new PlayerV1();
+            player2.setId("player2");
+            player2.setTeam(team);
+            player2.setName("name2");
+            manager.persist(player2);
+
+            // fail
+            // result: players: []
+            log.info("players: {}", team.getPlayers());
+        });
+    }
+
+    @Test
+    void notOwner() {
+        template(manager -> {
+            // team (transient)
+            TeamV1 team1 = new TeamV1();
+            team1.setId("team1");
+            team1.setName("team Seoul");
+
+            // player (transient)
+            PlayerV1 player1 = new PlayerV1();
+            player1.setId("player1");
+            player1.setTeam(team1);
+            player1.setName("name1");
+
+            // add player to team
+            team1.setPlayers(List.of(player1));
+
+            // persist
+            manager.persist(team1);
         });
     }
 

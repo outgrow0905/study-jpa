@@ -21,4 +21,13 @@ public class PlayerV1 {
     @ManyToOne
     @JoinColumn(name = "TEAM_ID")
     private TeamV1 team;
+
+    public void setTeam(TeamV1 team) {
+        this.team = team;
+
+        if (team != null
+            && !team.getPlayers().contains(this)) {
+            team.getPlayers().add(this);
+        }
+    }
 }

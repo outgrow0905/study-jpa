@@ -10,6 +10,8 @@
         <class>com.study.jpa.ch2.v1.BoardV4</class>
         <class>com.study.jpa.ch3.v1.PlayerV1</class>
         <class>com.study.jpa.ch3.v1.TeamV1</class>
+        <class>com.study.jpa.ch3.v2.PlayerV2</class>
+        <class>com.study.jpa.ch3.v2.TeamV2</class>
 
         <!-- app -->
         <class>com.study.jpa.app.v1.ItemV1</class>
