@@ -34,6 +34,12 @@
         <class>com.study.jpa.app.v2.OrderV2</class>
         <class>com.study.jpa.app.v2.OrderItemV2</class>
         <class>com.study.jpa.app.v2.UserV2</class>
+        <class>com.study.jpa.app.v3.ItemV3</class>
+        <class>com.study.jpa.app.v3.OrderV3</class>
+        <class>com.study.jpa.app.v3.OrderItemV3</class>
+        <class>com.study.jpa.app.v3.UserV3</class>
+        <class>com.study.jpa.app.v3.CategoryV3</class>
+        <class>com.study.jpa.app.v3.DeliveryV3</class>
 
         <properties>
             <!-- 필수 속성 -->
