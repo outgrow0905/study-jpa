@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -65,6 +66,32 @@ public class ManyToManyTest {
             assertEquals(product1.getOrders().get(0), order1);
             assertEquals(order1.getProducts().get(0), product1);
         });
+    }
 
+    @Test
+    void insert2() {
+        template(manager -> {
+            MyOrderV2 order1 = new MyOrderV2();
+            order1.setOrderName("order name1");
+            manager.persist(order1);
+
+            MyProductV2 product1 = new MyProductV2();
+            product1.setProductName("product name1");
+            manager.persist(product1);
+
+            MyOrderV2MyProductV2 orderProducts = new MyOrderV2MyProductV2();
+            orderProducts.setOrder(order1);
+            orderProducts.setProduct(product1);
+            orderProducts.setCount(2);
+            orderProducts.setOrderDate(LocalDateTime.now());
+            manager.persist(orderProducts);
+        });
+
+        template(manager -> {
+            MyProductV2 product1 = manager.find(MyProductV2.class, 1);
+            MyOrderV2 order1 = manager.find(MyOrderV2.class, 1);
+
+            assertEquals(order1.getOrderProducts().get(0).getProduct(), product1);
+        });
     }
 }
