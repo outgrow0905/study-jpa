@@ -214,3 +214,57 @@ void insert2() {
 
 
 #### 다대다 연결엔티티 (PK 사용)
+데이터베이스에서 `매핑테이블`에 `PK`를 넣어서 코드를 구성해보자.  
+실제로는 `복합키` 구성으로 사용하는 경우가 더 많다고 생각은 한다.  
+그래도 코드가 얼마나 간결해지는지 확인은 해보자.  
+
+~~~java
+@Entity
+public class MyOrderV3 {
+    @Id
+    @Column(name = "ORDER_ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    private String orderName;
+
+    @OneToMany(mappedBy = "order")
+    List<MyOrderV3MyProductV3> orderProducts;
+}
+
+@Entity
+public class MyProductV3 {
+    @Id
+    @Column(name = "PRODUCT_ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    private String productName;
+}
+
+@Entity
+public class MyOrderV3MyProductV3 {
+
+    @Id
+    @Column(name = "ORDER_PRODUCT_ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name = "ORDER_ID")
+    private MyOrderV3 order;
+
+    @ManyToOne
+    @JoinColumn(name = "PRODUCT_ID")
+    private MyProductV3 product;
+
+    private int count;
+    private LocalDateTime orderDate;
+}
+~~~
+매핑앤티티 `MyOrderV3MyProductV3`를 보니 코드가 많이 간결해지긴 했다.  
+`@Id`도 한군데 붙어있고, `@IdClass` 어노테이션도 제거할 수 있었다.  
+두 가지를 살펴보니 이는 선택의 문제이다.  
+데이터베이스에 복합키를 구성하여 실제 테이블을 깔끔하게 관리하는 대신, 코드 복잡도를 높이는 것과  
+데이터베이스에 복합키 대신 PK를 구성하면서 실제 테이블에 필요없는(?) 컬럼을 넣고, 코드를 간결하게 관리하는 것중에 선택할 수 있을 것이다.  
+(스프링부트 jpa에서 대안이 있을 것이라 본다.)

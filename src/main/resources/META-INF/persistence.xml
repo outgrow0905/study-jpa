@@ -21,6 +21,9 @@
         <class>com.study.jpa.ch3.v4.MyOrderV2</class>
         <class>com.study.jpa.ch3.v4.MyProductV2</class>
         <class>com.study.jpa.ch3.v4.MyOrderV2MyProductV2</class>
+        <class>com.study.jpa.ch3.v4.MyOrderV3</class>
+        <class>com.study.jpa.ch3.v4.MyProductV3</class>
+        <class>com.study.jpa.ch3.v4.MyOrderV3MyProductV3</class>
 
         <!-- app -->
         <class>com.study.jpa.app.v1.ItemV1</class>

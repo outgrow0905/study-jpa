@@ -94,4 +94,31 @@ public class ManyToManyTest {
             assertEquals(order1.getOrderProducts().get(0).getProduct(), product1);
         });
     }
+
+    @Test
+    void insert3() {
+        template(manager -> {
+            MyOrderV3 order1 = new MyOrderV3();
+            order1.setOrderName("order name1");
+            manager.persist(order1);
+
+            MyProductV3 product1 = new MyProductV3();
+            product1.setProductName("product name1");
+            manager.persist(product1);
+
+            MyOrderV3MyProductV3 orderProducts = new MyOrderV3MyProductV3();
+            orderProducts.setOrder(order1);
+            orderProducts.setProduct(product1);
+            orderProducts.setCount(2);
+            orderProducts.setOrderDate(LocalDateTime.now());
+            manager.persist(orderProducts);
+        });
+
+        template(manager -> {
+            MyProductV3 product1 = manager.find(MyProductV3.class, 1);
+            MyOrderV3 order1 = manager.find(MyOrderV3.class, 1);
+
+            assertEquals(order1.getOrderProducts().get(0).getProduct(), product1);
+        });
+    }
 }
