@@ -35,6 +35,7 @@ JPA에서 `복합키`는 편의에 따라 두 가지 방법으로 사용할수 �
 [Persistence Context](../../../ch1/v1/description/v1-2_persistence-context.md)에서 영속성 컨텍스트는 일종의 `map`구조와 같다고 하였다.  
 `key`와 엔티티를 저장하는 구조인데, `복합키`를 사용하는 엔티티는 `key`를 넣을떄에 복합키 여러개를 넣을 수 없다.  
 따라서 `equals()`와 `hashcode()`를 사용하여 `key`를 생성하고 이를 영속성 컨텍스트에 저장하는 것이다.  
+자세한 부분은 뒤에서 다루도록 하자.  
 
 여러 조건을 만족하는 코드는 아래와 같다.
 
@@ -61,15 +62,12 @@ public class ParentV1Id implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ParentV1Id that = (ParentV1Id) o;
-        return parentId1 == that.parentId1 && parentId2 == that.parentId2;
+        ...
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(parentId1, parentId2);
+        ...
     }
 }
 ~~~
@@ -152,3 +150,74 @@ void idClassChild() {
 
 ##### @EmbeddedId
 `복합키`를 구성하는 또다른 방법은 `@EmbeddedId` 어노테이션을 이용하는 것이다.  
+어떤것이 다른지 먼저 `Parent` 엔티티부터 보자.  
+
+~~~java
+@Entity
+public class ParentV2 {
+    @EmbeddedId
+    private ParentV2Id id;
+
+    private String name;
+}
+
+@Embeddable
+public class ParentV2Id implements Serializable {
+    @Column(name = "PARENT_ID1")
+    private int parentId1;
+
+    @Column(name = "PARENT_ID2")
+    private int parentId2;
+
+    @Override
+    public boolean equals(Object o) {
+        ...
+    }
+
+    @Override
+    public int hashCode() {
+        ...
+    }
+}
+~~~
+
+뭔가 간결해진 것 같다.  
+`@IdClass` 어노테이션도 업어졌고, 무엇보다 복합키 자체를 `ParentV2Id` 객체로 참조하고 있다.  
+`@IdClass`는 데이터베이스 테이블 설계와 엔티티를 똑같이 가져가야 했다. 마치 [App v1](../../../app/v1/description/app1.md)의 설계와 비슷하다.  
+`@EmbeddedId`는 조금 더 객체지향적인 것처럼 느껴진다.  
+`ParentV2Id`는 `@Column`을 추가한 것정도 변경되었다.   
+
+
+
+##### equals(), hashcode()
+`복합키` 객체를 만들떄에는 반드시 `equals(), hashcode()`를 오버라이드 해야한다.  
+이는 `영속성 컨텍스트`에 `엔티티`를 저장할 키가 되기 때문이다.  
+이를 적절히 오버라이드하지 않으면 기본적으로 `Object`의 `equals()`를 사용하게 된다.  
+`Object`의 `equals`는 기본적으로 `==` 비교를 한다. 다른 표현으로 `동등성` 비교이며, 또 다른 의미로는 `메모리주소`값을 비교한다는 것이다.  
+
+테스트를 해보자.
+
+##### 잘못된 예시
+~~~java
+@Override
+public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//        ParentV2Id that = (ParentV2Id) o;
+//        return parentId1 == that.parentId1 && parentId2 == that.parentId2;
+    return super.equals(o);
+}
+~~~
+위의 예시대로 `복합키` 객체에서 `equals()`를 정의했다면, 아래 테스트결과는 `false`이고,  
+위의 예시에서 주석대로 동등성비교가 아닌 동일성 비료를 헀다면 아래 테스트결과는 `true`이다.
+~~~java
+@Test
+void equalsAndHashCode() {
+    ParentV2Id id1 = new ParentV2Id(1, 1);
+    ParentV2Id id2 = new ParentV2Id(1, 1);
+    log.info("equals: {}", id1.equals(id2));
+}
+~~~
+
+복합키를 가진 엔티티이더라도 키가 같다면 결국 하나의 엔티티만 `영속성 컨텍스트`에 저장되어야 한다.  
+이를 가능하게 하려면 반드시 `equals()와 hashcode()` 메서드가 `동일성` 비교를 하도록 적절히 오버라이드해야 한다.  
