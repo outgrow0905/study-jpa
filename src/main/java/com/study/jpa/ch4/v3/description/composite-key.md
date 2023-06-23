@@ -90,3 +90,109 @@ public class GrandChildV3Id implements Serializable {
     }
 }
 ~~~
+
+
+##### EmbeddedId
+`@EmbeddedId`로 필수관계 복합키를 매핑해보자.  
+Parent는 아래와 같이 단순한 엔티티이다.
+
+~~~java
+@Entity
+public class ParentV4 {
+    @Id
+    @Column(name = "PARENT_ID")
+    private int parentId;
+    private String name;
+}
+~~~
+
+`Child`를 만들어보자. 별거 없으니 `ChildV4Id`를 살펴보자.  
+`childId, parentId` 두개가 `Child` 엔티티의 복합키라는 것을 알겠다.  
+다만 `parentId`는 `@Column`이 없는대신 `Child` 엔티티에 `@MapsId("parentId")`으로 매핑관계가 명시되고 있다.
+
+~~~java
+@Entity
+public class ChildV4 {
+
+    @EmbeddedId
+    private ChildV4Id childId;
+
+    @MapsId("parentId")
+    @ManyToOne
+    @JoinColumn(name = "PARENT_ID", referencedColumnName = "PARENT_ID")
+    private ParentV4 parent;
+}
+
+@Embeddable
+public class ChildV4Id implements Serializable {
+    @Column(name = "CHILD_ID")
+    private int childId;
+
+    private int parentId;
+
+    @Override
+    public boolean equals(Object o) {
+        ...
+    }
+
+    @Override
+    public int hashCode() {
+        ...
+    }
+}
+~~~
+
+`GrandChild`는 아래와 같다.
+
+~~~java
+@Entity
+public class GrandChildV4 {
+    @EmbeddedId
+    private GrandChildV4Id grandChildId;
+
+    @MapsId("childId")
+    @ManyToOne
+    @JoinColumns({
+            @JoinColumn(name = "PARENT_ID", referencedColumnName = "PARENT_ID"),
+            @JoinColumn(name = "CHILD_ID", referencedColumnName = "CHILD_ID")
+    })
+    private ChildV4 child;
+}
+
+@Embeddable
+public class GrandChildV4Id implements Serializable {
+    @Column(name = "GRAND_CHILD_ID")
+    private int grandChildId;
+    private ChildV4Id childId;
+
+    @Override
+    public boolean equals(Object o) {
+        ...
+    }
+
+    @Override
+    public int hashCode() {
+        ...
+    }
+}
+~~~
+
+
+
+#### conclusion
+책에서는 `식별관계`보다는 `비식별관계`를 권장한다.  
+`비식별관계`로 하면 `부모, 자식관계`라 할지라도 `자식`에서 키가 `1`개만 생성하면 되기 때문이다.  
+그리고 그 키는 아무런 의미없는 시퀀스가 될 것이다.    
+이렇게 관리하면 `복합키`의 존재를 없앨 수 있기 때문에 만들어야하는 클래스도 줄어든다.  
+`복합키` 클래스를 아예 만들지 않아도 되기 때문이다.
+
+하지만 반대로 `식별관계`를 썼을떄의 장점도 분명히 존재한다.  
+`부모, 자식, 손자` 관계가 늘어날수록 예를 들어 `손자` 테이블은 최소 `3`개의 컬럼으로 이루어진 `복합키`를 가져야 한다.  
+하지만 데이터를 조금 더 유용하게 관리할 수 있다.  
+
+`주문`과 `주문상품`의 관계를 생각해보자.  
+`식별관계`로 관리한다면 `주문상품`의 `복합키`는 `1-1, 1-2, 1-3, 2-1, 2-2, 2-3` 이렇게 관리가 된다.  
+`비식별관계`로 관리한다면 `주문상품`의 데이터는 `1-1, 2-2, 3-1, 4-2, 5-1, 6-2` 이렇게 관리가 될 수 있다.  
+결국 `비식별관계`에서 `주문`의 키값이 `1`인 데이터를 조회하면 `1-1, 3-1. 5-1` 이렇게 앞에 있는 `1, 3, 5`는 가비지 데이터가 된다.  
+하지만 `식별관계`의 데이터는 `수량`을 나타낼 수 있는 유효한 데이터가 된다.
+
