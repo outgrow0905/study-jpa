@@ -28,6 +28,9 @@
         <class>com.study.jpa.ch4.v1.ChildV1</class>
         <class>com.study.jpa.ch4.v2.ParentV2</class>
         <class>com.study.jpa.ch4.v2.ChildV2</class>
+        <class>com.study.jpa.ch4.v3.ParentV3</class>
+        <class>com.study.jpa.ch4.v3.ChildV3</class>
+        <class>com.study.jpa.ch4.v3.GrandChildV3</class>
 
         <!-- app -->
         <class>com.study.jpa.app.v1.ItemV1</class>
