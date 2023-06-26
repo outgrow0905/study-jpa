@@ -60,6 +60,15 @@
         <class>com.study.jpa.app.v3.UserV3</class>
         <class>com.study.jpa.app.v3.CategoryV3</class>
         <class>com.study.jpa.app.v3.DeliveryV3</class>
+        <class>com.study.jpa.app.v4.ItemV4</class>
+        <class>com.study.jpa.app.v4.OrderV4</class>
+        <class>com.study.jpa.app.v4.OrderItemV4</class>
+        <class>com.study.jpa.app.v4.UserV4</class>
+        <class>com.study.jpa.app.v4.CategoryV4</class>
+        <class>com.study.jpa.app.v4.DeliveryV4</class>
+        <class>com.study.jpa.app.v4.AlbumV4</class>
+        <class>com.study.jpa.app.v4.BookV4</class>
+        <class>com.study.jpa.app.v4.MovieV4</class>
 
         <properties>
             <!-- 필수 속성 -->
