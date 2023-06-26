@@ -38,7 +38,10 @@
         <class>com.study.jpa.ch5.v1.MyAlbumV1</class>
         <class>com.study.jpa.ch5.v1.MyBookV1</class>
         <class>com.study.jpa.ch5.v1.MyMovieV1</class>
-
+        <class>com.study.jpa.ch5.v2.MyItemV2</class>
+        <class>com.study.jpa.ch5.v2.MyAlbumV2</class>
+        <class>com.study.jpa.ch5.v2.MyBookV2</class>
+        <class>com.study.jpa.ch5.v2.MyMovieV2</class>
 
         <!-- app -->
         <class>com.study.jpa.app.v1.ItemV1</class>

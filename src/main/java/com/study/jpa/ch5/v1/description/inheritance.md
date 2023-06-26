@@ -52,3 +52,35 @@ public class MyAlbumV1 extends MyItemV1 {
     private String artist;
 }
 ~~~
+
+
+#### 단일테이블 전략 (SINGLE TABLE)
+`단일테이블` 전략은 하나의 테이블로 구성하는 것이다.  
+예를 들어 `영화, 책, 앨범`에 해당하는 컬럼들도 전부 `아이템` 테이블에 구성하는 것이다.  
+당연히 `null 허용`으로 말이다.  
+
+실무에서는 차라리 이런 형식으로 더 많이 쓰이는 것 같다.  
+예를 들어 `정률, 정액할인`이 있다고 가정했을 떄에 사용해야하는 컬럼이 다르다고 가정해보자.  
+`정률`은 `퍼센트`가 들어가야 하고, `정액`은 `금액`이 들어가야 할 것이다.  
+이러한 경우에 `조인 전략`보다는 `단일 테이블`에 `퍼센트, 금액`을 모두 `null 허용`으로 하고 `정액, 정률`을 구분할 수 있는 `분류컬럼`을 추가하는 것이 더 많이 선호한다.  
+
+예시는 위의 것을 그대로 사용하자.  
+
+~~~java
+@Entity
+@DiscriminatorColumn(name = "DTYPE")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+public abstract class MyItemV2 {
+    @Id
+    @Column(name = "ITEM_ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+    private int price;
+}
+~~~
+
+`@Inheritance`의 `strategy`만 바뀌고 나머지는 전부 그대로이다.  
+상속받는 엔티티도 전부 그대로이다.  
+단지 테이블 설계만 다르게 할 뿐이다.
