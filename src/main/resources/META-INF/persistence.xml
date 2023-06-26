@@ -34,6 +34,11 @@
         <class>com.study.jpa.ch4.v4.ParentV4</class>
         <class>com.study.jpa.ch4.v4.ChildV4</class>
         <class>com.study.jpa.ch4.v4.GrandChildV4</class>
+        <class>com.study.jpa.ch5.v1.MyItemV1</class>
+        <class>com.study.jpa.ch5.v1.MyAlbumV1</class>
+        <class>com.study.jpa.ch5.v1.MyBookV1</class>
+        <class>com.study.jpa.ch5.v1.MyMovieV1</class>
+
 
         <!-- app -->
         <class>com.study.jpa.app.v1.ItemV1</class>
