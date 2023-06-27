@@ -23,6 +23,12 @@ class OneToManyTest {
     @BeforeEach
     void init() {
         factory = Persistence.createEntityManagerFactory("jpabook");
+        template(
+                manager -> {
+                    manager.createQuery("DELETE FROM PlayerV2 p").executeUpdate();
+                    manager.createQuery("DELETE FROM TeamV2 t").executeUpdate();
+                }
+        );
     }
 
     @AfterEach

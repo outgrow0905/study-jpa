@@ -18,6 +18,12 @@ public class MergeTest {
     @BeforeEach
     void init() {
         factory = Persistence.createEntityManagerFactory("jpabook");
+        template(
+                manager -> {
+                    manager.createQuery("DELETE FROM MemberV1 m").executeUpdate();
+                    return null;
+                }
+        );
     }
 
     @AfterEach

@@ -19,9 +19,20 @@ class ManyToOneTest {
 
     EntityManagerFactory factory;
 
+//    @BeforeEach
+//    void init() {
+//        factory = Persistence.createEntityManagerFactory("jpabook");
+//    }
+
     @BeforeEach
     void init() {
         factory = Persistence.createEntityManagerFactory("jpabook");
+        template(
+                manager -> {
+                    manager.createQuery("DELETE FROM PlayerV1 p").executeUpdate();
+                    manager.createQuery("DELETE FROM TeamV1 t").executeUpdate();
+                }
+        );
     }
 
     @AfterEach

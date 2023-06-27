@@ -18,9 +18,19 @@ class MemberV2Test {
 
     EntityManagerFactory factory;
 
+//    @BeforeEach
+//    void init() {
+//        factory = Persistence.createEntityManagerFactory("jpabook");
+//    }
+
     @BeforeEach
     void init() {
         factory = Persistence.createEntityManagerFactory("jpabook");
+        template(
+                manager -> {
+                    manager.createQuery("DELETE FROM MemberV2 m").executeUpdate();
+                }
+        );
     }
 
     @AfterEach

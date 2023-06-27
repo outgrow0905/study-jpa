@@ -93,7 +93,7 @@
 
 
             <!-- for test only -->
-            <property name="hibernate.hbm2ddl.auto" value="create" /> <!-- create table based on @Entity -->
+            <property name="hibernate.hbm2ddl.auto" value="update" /> <!-- create table based on @Entity -->
 
         </properties>
     </persistence-unit>

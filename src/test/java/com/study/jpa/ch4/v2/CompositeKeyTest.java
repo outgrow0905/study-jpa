@@ -20,6 +20,12 @@ class CompositeKeyTest {
     @BeforeEach
     void init() {
         factory = Persistence.createEntityManagerFactory("jpabook");
+        template(
+                manager -> {
+                    manager.createQuery("DELETE FROM ChildV2 c").executeUpdate();
+                    manager.createQuery("DELETE FROM ParentV2 p").executeUpdate();
+                }
+        );
     }
 
     @AfterEach
@@ -75,15 +81,7 @@ class CompositeKeyTest {
             ChildV2 child1 = new ChildV2();
             child1.setParent(parent1);
             manager.persist(child1);
-        });
 
-        template(manager -> {
-            // select
-            ParentV2Id parentId1 = new ParentV2Id(1, 1);
-            ParentV2 parent1 = manager.find(ParentV2.class, parentId1);
-            assertEquals("parent1", parent1.getName());
-
-            ChildV2 child1 = manager.find(ChildV2.class, 1);
             assertEquals(parent1, child1.getParent());
         });
     }

@@ -19,7 +19,13 @@ class HelloJpaTest {
     @BeforeEach
     void init() {
         factory = Persistence.createEntityManagerFactory("jpabook");
+        template(
+                manager -> {
+                    manager.createQuery("DELETE FROM MemberV1 m").executeUpdate();
+                }
+        );
     }
+
     @AfterEach
     void close() {
         factory.close();

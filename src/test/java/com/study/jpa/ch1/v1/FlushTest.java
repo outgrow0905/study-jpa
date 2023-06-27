@@ -20,6 +20,11 @@ public class FlushTest {
     @BeforeEach
     void init() {
         factory = Persistence.createEntityManagerFactory("jpabook");
+        templateOnlyCommitWithoutFlush(
+            manager -> {
+                manager.createQuery("DELETE FROM MemberV1 m").executeUpdate();
+            }
+        );
     }
     @AfterEach
     void close() {

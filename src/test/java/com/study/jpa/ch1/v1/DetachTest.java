@@ -19,9 +19,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class DetachTest {
     EntityManagerFactory factory;
 
+//    @BeforeEach
+//    void init() {
+//        factory = Persistence.createEntityManagerFactory("jpabook");
+//    }
+
     @BeforeEach
     void init() {
         factory = Persistence.createEntityManagerFactory("jpabook");
+        template(
+                manager -> {
+                    manager.createQuery("DELETE FROM MemberV1 m").executeUpdate();
+                    return null;
+                }
+        );
     }
 
     @AfterEach
