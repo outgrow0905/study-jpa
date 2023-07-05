@@ -44,6 +44,8 @@
         <class>com.study.jpa.ch5.v2.MyMovieV2</class>
         <class>com.study.jpa.ch5.v3.MyMember</class>
         <class>com.study.jpa.ch5.v3.MySeller</class>
+        <class>com.study.jpa.ch6.v1.HelloMember</class>
+        <class>com.study.jpa.ch6.v1.HelloTeam</class>
 
         <!-- app -->
         <class>com.study.jpa.app.v1.ItemV1</class>
