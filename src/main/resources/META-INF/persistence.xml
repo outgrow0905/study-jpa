@@ -79,6 +79,15 @@
         <class>com.study.jpa.app.v4.AlbumV4</class>
         <class>com.study.jpa.app.v4.BookV4</class>
         <class>com.study.jpa.app.v4.MovieV4</class>
+        <class>com.study.jpa.app.v5.ItemV5</class>
+        <class>com.study.jpa.app.v5.OrderV5</class>
+        <class>com.study.jpa.app.v5.OrderItemV5</class>
+        <class>com.study.jpa.app.v5.UserV5</class>
+        <class>com.study.jpa.app.v5.CategoryV5</class>
+        <class>com.study.jpa.app.v5.DeliveryV5</class>
+        <class>com.study.jpa.app.v5.AlbumV5</class>
+        <class>com.study.jpa.app.v5.BookV5</class>
+        <class>com.study.jpa.app.v5.MovieV5</class>
 
         <properties>
             <!-- 필수 속성 -->
