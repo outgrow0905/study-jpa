@@ -52,6 +52,9 @@
         <class>com.study.jpa.ch6.v3.MyChildV1</class>
         <class>com.study.jpa.ch6.v4.MyParentV2</class>
         <class>com.study.jpa.ch6.v4.MyChildV2</class>
+        <class>com.study.jpa.ch6.v5.MyParentV3</class>
+        <class>com.study.jpa.ch6.v5.MyChildV3</class>
+
         <!-- app -->
         <class>com.study.jpa.app.v1.ItemV1</class>
         <class>com.study.jpa.app.v1.OrderV1</class>

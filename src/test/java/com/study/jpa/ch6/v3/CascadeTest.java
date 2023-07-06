@@ -2,7 +2,10 @@ package com.study.jpa.ch6.v3;
 
 import com.study.jpa.ch6.v4.MyChildV2;
 import com.study.jpa.ch6.v4.MyParentV2;
+import com.study.jpa.ch6.v5.MyChildV3;
+import com.study.jpa.ch6.v5.MyParentV3;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.Parent;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -105,6 +108,52 @@ class CascadeTest {
 
             // remove
             manager.remove(parent);
+        });
+    }
+
+    @Test
+    void withoutOrphan() {
+        final MyParentV2 parent = new MyParentV2();
+
+        template(manager -> {
+            MyChildV2 child1 = new MyChildV2();
+            MyChildV2 child2 = new MyChildV2();
+
+            child1.setParent(parent);
+            child2.setParent(parent);
+            parent.setChildren(List.of(child1, child2));
+
+            // persist
+            manager.persist(parent);
+        });
+
+        template(manager -> {
+            MyParentV2 findParent = manager.find(MyParentV2.class, parent.getId());
+            manager.remove(findParent.getChildren().get(0));
+            manager.remove(findParent.getChildren().get(1));
+            manager.remove(findParent);
+        });
+    }
+
+    @Test
+    void orphanRemoval() {
+        final MyParentV3 parent = new MyParentV3();
+
+        template(manager -> {
+            MyChildV3 child1 = new MyChildV3();
+            MyChildV3 child2 = new MyChildV3();
+
+            child1.setParent(parent);
+            child2.setParent(parent);
+            parent.setChildren(List.of(child1, child2));
+
+            // persist
+            manager.persist(parent);
+        });
+
+        template(manager -> {
+            MyParentV3 findParent = manager.find(MyParentV3.class, parent.getId());
+            findParent.getChildren().remove(0);
         });
     }
 }

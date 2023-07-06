@@ -120,3 +120,101 @@ void cascadeRemove() {
     });
 }
 ~~~
+
+
+#### 고아객체
+jpa에서는 영속성 컨텍스트에 등록된 부모객체로부터 연관관계가 끊어진 자식엔티티를 자동으로 제거해주는 기능이 있다.  
+먼저, 이 기능을 사용하지 않고 자식엔티티를 삭제해보자.
+
+~~~java
+@Test
+void withoutOrphan() {
+    final MyParentV2 parent = new MyParentV2();
+
+    template(manager -> {
+        MyChildV2 child1 = new MyChildV2();
+        MyChildV2 child2 = new MyChildV2();
+
+        child1.setParent(parent);
+        child2.setParent(parent);
+        parent.setChildren(List.of(child1, child2));
+
+        // persist
+        manager.persist(parent);
+    });
+
+    template(manager -> {
+        MyParentV2 findParent = manager.find(MyParentV2.class, parent.getId());
+        manager.remove(findParent.getChildren().get(0));
+    });
+}
+~~~
+
+이처럼 `child` 엔티티를 직접 조회하여 삭제해야한다.  
+`parent`는 `child` 의 `연관관계 주인`이 아니기때문에 `parent`에서 `child`를 꺼내서 삭제한다 한들 `delete` 쿼리는 수행되지 않는다.  
+이러한 기능을 편리하게 해주는 기능이 고아객체제거 기능이다.  
+
+`parent`에 `고아객체제거` 기능을 붙여보자.
+
+~~~java
+@Entity
+public class MyParentV3 {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    @OneToMany(mappedBy = "parent", orphanRemoval = true)
+    private List<MyChildV3> children;
+}
+~~~
+
+이제 테스트를 수행해보자.  
+연관관계의 주인도 아닌 `parent`에서 `child`를 제거하면 `delete`가 수행되면 성공이다.  
+
+~~~java
+@Entity
+public class MyParentV3 {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<MyChildV3> children;
+}
+~~~
+
+테스트코드는 아래와 같다.
+
+~~~java
+@Test
+void orphanRemoval() {
+    final MyParentV3 parent = new MyParentV3();
+
+    template(manager -> {
+        MyChildV3 child1 = new MyChildV3();
+        MyChildV3 child2 = new MyChildV3();
+
+        child1.setParent(parent);
+        child2.setParent(parent);
+        parent.setChildren(List.of(child1, child2));
+
+        // persist
+        manager.persist(parent);
+    });
+
+    template(manager -> {
+        MyParentV3 findParent = manager.find(MyParentV3.class, parent.getId());
+        findParent.getChildren().remove(0);
+    });
+}
+~~~
+
+`orphanRemoval`은 어디서나 사용할수는 없다.  
+`멤버`와 `팀`의 관계를 생각해보자.  
+여기서 `parent` 역할은 `팀`이 될 것이다.  
+`orphanRemoval`을 `팀`의 `회원리스트`에 설정하게 되면 위의 예시와 같이 잘 동작할 것이다.  
+그러나 `orphanRemoval`을 `회원`에 설정한다면 어떻게 될까?  
+`회원엔티티`에서 `팀`을 제거하면 `팀` 데이터가 삭제될까?  
+너무나 위험한 기능이다. 특정 `멤버`에서 `팀`을 제거한다고해서 `팀` 데이터를 삭제한다면 삭제하는 `팀`에 소속된 다른 `멤버`들은 더미데이터가 된다.  
+따라서 jpa는 그러한 기능을 제한적으로 제공한다.  
+`orphanRemoval`을 `@OneToMany, @ManyToMany`에만 제공하는 이유이다.
