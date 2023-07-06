@@ -48,7 +48,10 @@
         <class>com.study.jpa.ch6.v1.HelloTeamV1</class>
         <class>com.study.jpa.ch6.v2.HelloMemberV2</class>
         <class>com.study.jpa.ch6.v2.HelloTeamV2</class>
-
+        <class>com.study.jpa.ch6.v3.MyParentV1</class>
+        <class>com.study.jpa.ch6.v3.MyChildV1</class>
+        <class>com.study.jpa.ch6.v4.MyParentV2</class>
+        <class>com.study.jpa.ch6.v4.MyChildV2</class>
         <!-- app -->
         <class>com.study.jpa.app.v1.ItemV1</class>
         <class>com.study.jpa.app.v1.OrderV1</class>
