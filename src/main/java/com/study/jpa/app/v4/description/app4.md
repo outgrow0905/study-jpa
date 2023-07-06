@@ -8,7 +8,7 @@
 
 
 #### 상품종류 추가
-[상속](../../../ch5/v1/description/inheritance.md)에서 배운 `단일테이블전략`을 사용해서 구현해보자.  
+[상속](../../../ch5/description/1_inheritance.md)에서 배운 `단일테이블전략`을 사용해서 구현해보자.  
 먼저 `Item` 엔티티를 추상화하자.    
 그리고, 기존의 엔티티에서 `@DiscriminatorColumn, @Inheritance` 두 어노테이션만 추가하면 된다.
 
@@ -64,7 +64,7 @@ public class MovieV4 extends ItemV4 {
 지금까지 생성한 모든 엔티티에 `등록일과 수정일`을 추가해야 한다.  
 생성된 모든 테이블에 두 컬럼을 추가하는것도 일이지만, 코드를 수정하는것도 여간 번거로운것이 아니다.  
 
-[mapped-super-class.md](../../../ch5/v3/description/mapped-super-class.md)에서 배운것을 사용할 때이다.
+[mapped-super-class.md](../../../ch5/description/2_mapped-super-class.md)에서 배운것을 사용할 때이다.
 
 `등록일과 수정일`이 필요하다면 언제든 사용할 수 있도록 공통엔티티를 추가해보자.  
 

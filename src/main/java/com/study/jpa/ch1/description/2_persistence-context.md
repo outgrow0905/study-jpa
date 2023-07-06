@@ -1,7 +1,7 @@
 #### Persistence Context
 JPA에서 중요한 개념인 `Persistence Context`에 대해서 알아보자.
 
-[예시](v1-1_hello-jpa.md)에서는 두 곳에서 `setAge()`를 수행한다.  
+[예시](1_hello-jpa.md)에서는 두 곳에서 `setAge()`를 수행한다.  
 그런데 첫 번째 `setAge(20)`에서는 데이터베이스에서 쿼리가 수행되지 않고,    
 두 번째 `setAge(21)`에서는 실제 update 쿼리가 수행된다.  
 
@@ -29,11 +29,11 @@ JPA에서 중요한 개념인 `Persistence Context`에 대해서 알아보자.
 `transient/new`   
 쉽게 말하자면 `persist()`가 호출되기 이전상태이다.  
 그리고 `Persistence Context`에 등록되기 이전 상태이기도 하다.  
-[예시](v1-1_hello-jpa.md)에서 `persist()` 이전에 아무리 많은 `setAge()` 함수가 호출된다 하더라도, 데이터베이스와는 아무런 상관이 없는 평범한 자바 객체일 뿐이다.
+[예시](1_hello-jpa.md)에서 `persist()` 이전에 아무리 많은 `setAge()` 함수가 호출된다 하더라도, 데이터베이스와는 아무런 상관이 없는 평범한 자바 객체일 뿐이다.
 
 `managed`   
 `Persistence Context`에 등록된 상태이다.  
-[예시](v1-1_hello-jpa.md)에서 `persist()` 호출을 통해 등록된다.  
+[예시](1_hello-jpa.md)에서 `persist()` 호출을 통해 등록된다.  
 이때부터는 `setAge()`가 호출되면 실제 `update`가 진행될 수 있다.  
 혹은 `find()` 가 호출되면 `Persistence Context`에 해당 `Entity`가 있을 시에 먼저 찾게 된다. 
 

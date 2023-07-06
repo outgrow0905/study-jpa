@@ -1,5 +1,5 @@
 #### detach
-[Persistence Context 예제](v1-2_persistence-context.md)에서 `detach` 상태에 대해 더 알아보자.  
+[Persistence Context 예제](2_persistence-context.md)에서 `detach` 상태에 대해 더 알아보자.  
 `detach` 상태는 `Persistence Context`에 등록되었다가 해지된 상태를 말한다.  
 따라서 `transient` 상태와 별반 다를 것이 없다.  
 

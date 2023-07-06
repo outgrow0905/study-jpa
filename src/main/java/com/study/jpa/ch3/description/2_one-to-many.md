@@ -1,5 +1,5 @@
 #### OneToMany
-`OneToMany`는 [many-to-one](../../v1/description/many-to-one.md)에서 보았듯이,  
+`OneToMany`는 [many-to-one](1_many-to-one.md)에서 보았듯이,  
 하나의 `Team`에 여러개의 `Player`가 매핑되는 관계를 의미한다.  
 
 다른 점은 외래키를 `Team`에서 관리하는 것이다.  

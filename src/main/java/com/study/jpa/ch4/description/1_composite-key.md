@@ -1,5 +1,5 @@
 #### 식별관계 복합 키 매핑
-[composite-key.md](../../v1/description/composite-key.md)에서  
+[composite-key.md](../../description/composite-key.md)에서  
 복합키를 구성하는 `@IdClass`와 `@EmbeddedId`를 학습했다.  
 예시들이 전부 `비식별관계`였으므로, 이번에는 조금더 까다로운 `식별관계`를 구현해보자.  
  
