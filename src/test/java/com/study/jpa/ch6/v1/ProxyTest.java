@@ -1,5 +1,7 @@
 package com.study.jpa.ch6.v1;
 
+import com.study.jpa.ch6.v2.HelloMemberV2;
+import com.study.jpa.ch6.v2.HelloTeamV2;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,7 +13,8 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import java.util.function.Consumer;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 class ProxyTest {
@@ -24,8 +27,10 @@ class ProxyTest {
         factory = Persistence.createEntityManagerFactory("jpabook");
         template(
                 manager -> {
-                    manager.createQuery("DELETE FROM HelloMember m").executeUpdate();
-                    manager.createQuery("DELETE FROM HelloTeam t").executeUpdate();
+                    manager.createQuery("DELETE FROM HelloMemberV1 m").executeUpdate();
+                    manager.createQuery("DELETE FROM HelloTeamV1 t").executeUpdate();
+                    manager.createQuery("DELETE FROM HelloMemberV2 m").executeUpdate();
+                    manager.createQuery("DELETE FROM HelloTeamV2 t").executeUpdate();
                 }
         );
     }
@@ -55,18 +60,18 @@ class ProxyTest {
     @Test
     void uselessJoin() {
         template(manager -> {
-            HelloTeam team = new HelloTeam();
+            HelloTeamV1 team = new HelloTeamV1();
             team.setName("team1");
             manager.persist(team);
 
-            HelloMember member = new HelloMember();
+            HelloMemberV1 member = new HelloMemberV1();
             member.setUsername("member1");
             member.setTeam(team);
             manager.persist(member);
         });
 
         template(manager -> {
-            HelloMember member = manager.find(HelloMember.class, "member1");
+            HelloMemberV1 member = manager.find(HelloMemberV1.class, "member1");
             log.info("name: {}", member.getUsername());
         });
     }
@@ -74,18 +79,18 @@ class ProxyTest {
     @Test
     void proxy1() {
         template(manager -> {
-            HelloTeam team = new HelloTeam();
+            HelloTeamV1 team = new HelloTeamV1();
             team.setName("team1");
             manager.persist(team);
 
-            HelloMember member = new HelloMember();
+            HelloMemberV1 member = new HelloMemberV1();
             member.setUsername("member1");
             member.setTeam(team);
             manager.persist(member);
         });
 
         template(manager -> {
-            HelloMember member = manager.getReference(HelloMember.class, "member1");
+            HelloMemberV1 member = manager.getReference(HelloMemberV1.class, "member1");
             log.info("name: {}", member.getUsername());
         });
     }
@@ -93,11 +98,11 @@ class ProxyTest {
     @Test
     void proxy2() {
         template(manager -> {
-            HelloTeam team = new HelloTeam();
+            HelloTeamV1 team = new HelloTeamV1();
             team.setName("team1");
             manager.persist(team);
 
-            HelloMember member = new HelloMember();
+            HelloMemberV1 member = new HelloMemberV1();
             member.setUsername("member1");
             member.setAddress("address1");
             member.setTeam(team);
@@ -105,7 +110,7 @@ class ProxyTest {
         });
 
         template(manager -> {
-            HelloMember member = manager.getReference(HelloMember.class, "member1");
+            HelloMemberV1 member = manager.getReference(HelloMemberV1.class, "member1");
             log.info("name: {}", member.getAddress());
         });
     }
@@ -113,12 +118,12 @@ class ProxyTest {
     @Test
     void proxy3() {
         template(manager -> {
-            HelloTeam team = new HelloTeam();
+            HelloTeamV1 team = new HelloTeamV1();
             team.setName("team1");
             team.setAddress("address1");
             manager.persist(team);
 
-            HelloMember member = new HelloMember();
+            HelloMemberV1 member = new HelloMemberV1();
             member.setUsername("member1");
             member.setAddress("address1");
             member.setTeam(team);
@@ -126,10 +131,53 @@ class ProxyTest {
         });
 
         template(manager -> {
-            HelloTeam team = manager.getReference(HelloTeam.class, "team1");
-            log.info("isProxy: {}", manager.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(team));
+            HelloTeamV1 team = manager.getReference(HelloTeamV1.class, "team1");
+            assertFalse(manager.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(team));
             log.info("name: {}", team.getAddress());
-            log.info("isProxy: {}", manager.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(team));
+            assertTrue(manager.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(team));
+            log.info("persistent: {}", team.getMembers().getClass().getName());
+        });
+    }
+
+    @Test
+    void proxy4() {
+        template(manager -> {
+            HelloTeamV2 team = new HelloTeamV2();
+            team.setName("team1");
+            team.setAddress("address1");
+            manager.persist(team);
+
+            HelloMemberV2 member = new HelloMemberV2();
+            member.setUsername("member1");
+            member.setAddress("address1");
+            member.setTeam(team);
+            manager.persist(member);
+        });
+
+        template(manager -> {
+            HelloMemberV2 member = manager.getReference(HelloMemberV2.class, "member1");
+            log.info("name: {}", member.getAddress());
+        });
+    }
+
+    @Test
+    void proxy5() {
+        template(manager -> {
+            HelloTeamV2 team = new HelloTeamV2();
+            team.setName("team1");
+            team.setAddress("address1");
+            manager.persist(team);
+
+            HelloMemberV2 member = new HelloMemberV2();
+            member.setUsername("member1");
+            member.setAddress("address1");
+            member.setTeam(team);
+            manager.persist(member);
+        });
+
+        template(manager -> {
+            HelloTeamV2 team = manager.getReference(HelloTeamV2.class, "team1");
+            log.info("name: {}", team.getAddress());
         });
     }
 }

@@ -53,7 +53,7 @@ void uselessJoin() {
 }
 ~~~
 
-`50`번째 라인에서 jpa는 어떤 쿼리를 만들까?  
+`find()`에서 jpa는 어떤 쿼리를 만들까?  
 `member` 테이블만 조회하는것이 아무래도 효율적일 것 같다.  
 `team` 외래키의 주인이기는 하지만 아직 사용을 하는곳이 없으니 굳이 `team` 테이블은 아직 조회할 필요가 없기 때문이다.  
 
@@ -189,3 +189,101 @@ void proxy3() {
 ~~~
 
 #### 즉시로딩, 지연로딩
+위에서 말한것 처럼 jpa에서는 즉시로딩과 지연로딩의 기본정책이 있지만 별도로 세팅도 가능하다.  
+공부하는 차원이니 jpa 기본정책과 반대로 `@OneToMany`에는 `즉시로딩`을, `@ManyToOne`에는 `지연로딩`을 설정해보자.
+
+~~~java
+@Entity
+public class HelloTeamV2 {
+    @Id
+    private String name;
+
+    private String address;
+
+    @OneToMany(mappedBy = "team", fetch = FetchType.EAGER)
+    private List<HelloMemberV2> members;
+}
+
+@Entity
+public class HelloMemberV2 {
+    @Id
+    private String username;
+
+    private String address;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private HelloTeamV2 team;
+}
+~~~
+
+테스트코드는 아래와 같다. 
+기대하기로는 `@ManyToOne`이지만 `즉시로딩`을 하지않고 `지연로딩`하는 것이다. 
+
+~~~java
+@Test
+void proxy4() {
+    template(manager -> {
+        HelloTeamV2 team = new HelloTeamV2();
+        team.setName("team1");
+        team.setAddress("address1");
+        manager.persist(team);
+
+        HelloMemberV2 member = new HelloMemberV2();
+        member.setUsername("member1");
+        member.setAddress("address1");
+        member.setTeam(team);
+        manager.persist(member);
+    });
+
+    template(manager -> {
+        HelloMemberV2 member = manager.getReference(HelloMemberV2.class, "member1");
+        log.info("name: {}", member.getAddress());
+    });
+}
+~~~
+
+결과는 아래와 같다.  
+기대한대로 `지연로딩`을 하기 때문에 조인하지 않고 `member` 테이블만 조회하였다.
+
+![proxy4](img/proxy4.png)
+
+반대로 `team`에서의 조회는 `@OneToMany` 임에도 즉시로딩을 하는지 확인해보자.
+
+~~~java
+@Test
+void proxy5() {
+    template(manager -> {
+        HelloTeamV2 team = new HelloTeamV2();
+        team.setName("team1");
+        team.setAddress("address1");
+        manager.persist(team);
+
+        HelloMemberV2 member = new HelloMemberV2();
+        member.setUsername("member1");
+        member.setAddress("address1");
+        member.setTeam(team);
+        manager.persist(member);
+    });
+
+    template(manager -> {
+        HelloTeamV2 team = manager.getReference(HelloTeamV2.class, "team1");
+        log.info("name: {}", team.getAddress());
+    });
+}
+~~~
+
+아래와 같이설정한대로 동작하는것을 볼 수 있다.  
+아래의 캡쳐에서 한가지 짚고 넘어갈 것은 `left outer join` 부분이다.    
+`left outer join`을 선택한 이유는 특정 팀에 소속된 멤버가 한명도 없을 경우에 `일반조인`을 할 경우 결과값에 나오지 않기 때문이다.
+
+![proxy5](img/proxy5.png)  
+
+반대로 `member` 기준으로 `team`을 `즉시로딩`으로 조회했다고 가정해보자.  
+이 경우에도 `left outer join`이 생성된다.  
+어떤 팀에도 소속되지 않은 멤버의 경우 `일반조인`을 할 경우 결과값에 나오지 않기 때문이다.  
+하지만, 특정 회원이 반드시 한 팀에 소속되어야 한다면 `left outer join`은 성능상 손실이다.  
+
+이 부분은 해당 컬럼이 `null 허용`인지 아닌지 명시해주면 된다.  
+이는 두 방법으로 가능한데 `@JoinColumn`의 `nullable` 설정을 이용하거나,  
+`@ManyToOne`의 `optional` 설정을 `true`로 설정하면 된다.    
+이해히기 어렵지 않은  부분이니 넘어가자.

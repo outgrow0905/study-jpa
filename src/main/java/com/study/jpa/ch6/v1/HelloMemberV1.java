@@ -8,12 +8,12 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Entity
-public class HelloMember {
+public class HelloMemberV1 {
     @Id
     private String username;
 
     private String address;
 
     @ManyToOne
-    private HelloTeam team;
+    private HelloTeamV1 team;
 }
