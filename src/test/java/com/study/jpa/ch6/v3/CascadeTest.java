@@ -29,14 +29,6 @@ class CascadeTest {
     @BeforeEach
     void init() {
         factory = Persistence.createEntityManagerFactory("jpabook");
-        template(
-                manager -> {
-                    manager.createQuery("DELETE FROM HelloMemberV1 m").executeUpdate();
-                    manager.createQuery("DELETE FROM HelloTeamV1 t").executeUpdate();
-                    manager.createQuery("DELETE FROM HelloMemberV2 m").executeUpdate();
-                    manager.createQuery("DELETE FROM HelloTeamV2 t").executeUpdate();
-                }
-        );
     }
 
     @AfterEach

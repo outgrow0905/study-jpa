@@ -54,6 +54,12 @@
         <class>com.study.jpa.ch6.v4.MyChildV2</class>
         <class>com.study.jpa.ch6.v5.MyParentV3</class>
         <class>com.study.jpa.ch6.v5.MyChildV3</class>
+        <class>com.study.jpa.ch7.v1.AMemberV1</class>
+        <class>com.study.jpa.ch7.v2.AMemberV2</class>
+        <class>com.study.jpa.ch7.v3.AMemberV3</class>
+        <class>com.study.jpa.ch7.v3.PhoneServiceProviderV3</class>
+        <class>com.study.jpa.ch7.v4.AMemberV4</class>
+        <class>com.study.jpa.ch7.v4.PhoneServiceProviderV4</class>
 
         <!-- app -->
         <class>com.study.jpa.app.v1.ItemV1</class>
