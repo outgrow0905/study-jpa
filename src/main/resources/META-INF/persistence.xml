@@ -60,6 +60,7 @@
         <class>com.study.jpa.ch7.v3.PhoneServiceProviderV3</class>
         <class>com.study.jpa.ch7.v4.AMemberV4</class>
         <class>com.study.jpa.ch7.v4.PhoneServiceProviderV4</class>
+        <class>com.study.jpa.ch7.v5.BMemberV1</class>
 
         <!-- app -->
         <class>com.study.jpa.app.v1.ItemV1</class>
