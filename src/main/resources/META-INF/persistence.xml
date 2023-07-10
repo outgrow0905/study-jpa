@@ -96,6 +96,16 @@
         <class>com.study.jpa.app.v5.BookV5</class>
         <class>com.study.jpa.app.v5.MovieV5</class>
 
+        <class>com.study.jpa.app.v6.ItemV6</class>
+        <class>com.study.jpa.app.v6.OrderV6</class>
+        <class>com.study.jpa.app.v6.OrderItemV6</class>
+        <class>com.study.jpa.app.v6.UserV6</class>
+        <class>com.study.jpa.app.v6.CategoryV6</class>
+        <class>com.study.jpa.app.v6.DeliveryV6</class>
+        <class>com.study.jpa.app.v6.AlbumV6</class>
+        <class>com.study.jpa.app.v6.BookV6</class>
+        <class>com.study.jpa.app.v6.MovieV6</class>
+
         <properties>
             <!-- 필수 속성 -->
             <property name="javax.persistence.jdbc.driver" value="com.p6spy.engine.spy.P6SpyDriver"/>
