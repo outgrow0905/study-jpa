@@ -156,5 +156,76 @@ class JpqlTest {
 
             assertEquals("name1", member.getUsername());
         });
+
+        template(manager -> {
+            manager.createQuery("delete from CMemberV1 m").executeUpdate();
+        });
+    }
+
+    @Test
+    void embedded() {
+        template(manager -> {
+            manager.createQuery("delete from COrderV1").executeUpdate();
+        });
+
+        template(manager -> {
+            COrderV1 order = new COrderV1();
+            order.setOrderAmount(100);
+            order.setAddress(new CAddressV1("city1", "street1", "01234"));
+            manager.persist(order);
+        });
+
+        template(manager -> {
+            CAddressV1 address = manager.createQuery(
+                    "select o.address from COrderV1 o",
+                    CAddressV1.class
+            ).getSingleResult();
+
+            assertEquals("city1", address.getCity());
+        });
+    }
+
+    @Test
+    void paging() {
+        template(manager -> {
+            manager.createQuery("delete from CMemberV1 m").executeUpdate();
+        });
+
+        template(manager -> {
+            CMemberV1 member1 = new CMemberV1();
+            member1.setUsername("name1");
+            member1.setAge(10);
+            manager.persist(member1);
+
+            CMemberV1 member2 = new CMemberV1();
+            member2.setUsername("name2");
+            member2.setAge(20);
+            manager.persist(member2);
+
+            CMemberV1 member3 = new CMemberV1();
+            member3.setUsername("name3");
+            member3.setAge(30);
+            manager.persist(member3);
+
+            CMemberV1 member4 = new CMemberV1();
+            member4.setUsername("name4");
+            member4.setAge(40);
+            manager.persist(member4);
+        });
+
+        template(manager -> {
+            CMemberV1 member = manager.createQuery(
+                    "select m from CMemberV1 m",
+                    CMemberV1.class)
+                    .setFirstResult(2)
+                    .setMaxResults(1)
+                    .getSingleResult();
+
+            assertEquals("name3", member.getUsername());
+        });
+
+        template(manager -> {
+            manager.createQuery("delete from CMemberV1 m").executeUpdate();
+        });
     }
 }

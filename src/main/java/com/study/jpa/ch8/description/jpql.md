@@ -117,6 +117,74 @@ void jpql4() {
 임베디드 타입을 조회할 떄에는 주의할 점이 있다.  
 임베디드는 엔티티관리를 객체지향적으로 하기 위해 사용하는 용도일뿐 엔티티는 아니다.  
 따라서 엔티티를 기준으로 조회하는 jpql에서 임베디드 타입 그자체는 쿼리의 대상이 될 수 없다.  
-임베디드는 조회의 시작점이 될 수 없고 엔티티로부터 조회를 해야한다는 것이다.  
+`from`뒤에 올 수 없다는 의미이기도 하다.    
+임베디드는 조회의 시작점이 될 수 없고 엔티티로부터 조회를 해야한다.      
 아래의 예시를 보고 빠르게 넘어가자.
 
+`address`는 임베디드이고 엔티티가 아니기 때문에 `from Address`와 같이 조회할 수 없고,  
+`address`가 속한 `order`로부터 `o.address`와 같이 조회해야 한다.
+
+~~~java
+@Test
+void jpql5() {
+    template(manager -> {
+        CAddressV1 address = manager.createQuery(
+            "select o.address from COrderV1 o",
+            CAddressV1.class
+        ).getSingleResult();
+    
+        assertEquals("city1", address.getCity());
+    });
+}
+~~~
+
+
+#### 페이징
+페이징을 처리하는것은 번거로운 일이다.  
+데이터베이스마다 페이징을 처리하는 방법이 다 다르기 때문이다.  
+예를 들어, 어떤 데이터베이스는 `0`부터 페이징이 시작하고, 어떤 데이터베이스는 `1`부터 페이징을 시작한다.  
+
+jpa에서 페이징을 어떻게 처리하는지 아래에서 알아보자.  
+`setFirstResult(), setMaxResults()`을 통해서 처리한다.   
+`setFirstResult()`는 어디서부터 조회할지를 의미하며 0부터 시작한다.  
+`setMaxResults()`는 몇개의 값을 가져올지 최대값을 의미한다.  
+
+예를 들어, `setFirstResult(2).setMaxResults(1)`를 설정하면 `3`번째데이터 `1`개를 조회하게 된다.
+
+~~~java
+@Test
+void paging() {
+    template(manager -> {
+        CMemberV1 member1 = new CMemberV1();
+        member1.setUsername("name1");
+        member1.setAge(10);
+        manager.persist(member1);
+
+        CMemberV1 member2 = new CMemberV1();
+        member2.setUsername("name2");
+        member2.setAge(20);
+        manager.persist(member2);
+
+        CMemberV1 member3 = new CMemberV1();
+        member3.setUsername("name3");
+        member3.setAge(30);
+        manager.persist(member3);
+
+        CMemberV1 member4 = new CMemberV1();
+        member4.setUsername("name4");
+        member4.setAge(40);
+        manager.persist(member4);
+    });
+
+    template(manager -> {
+        CMemberV1 member = manager.createQuery(
+                "select m from CMemberV1 m",
+                CMemberV1.class)
+                .setFirstResult(2)
+                .setMaxResults(1)
+                .getSingleResult();
+
+        assertEquals("name3", member.getUsername());
+    });
+}
+~~~
