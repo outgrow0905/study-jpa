@@ -3,10 +3,7 @@ package com.study.jpa.ch8.v1;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Getter
 @Setter
@@ -17,4 +14,7 @@ public class CMemberV1 {
     private int id;
     private String username;
     private int age;
+
+    @ManyToOne
+    private CTeamV1 team;
 }
