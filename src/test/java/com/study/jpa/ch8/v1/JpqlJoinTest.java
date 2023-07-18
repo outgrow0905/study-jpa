@@ -291,10 +291,7 @@ class JpqlJoinTest {
                             CTeamV1.class)
                     .getResultList();
 
-            teams.forEach(team -> {
-                log.info("team name: {}", team.getName());
-                log.info("team members size: {}", team.getMembers().size());
-            });
+            assertEquals(1, teams.size());
         });
 
         template(manager -> {
