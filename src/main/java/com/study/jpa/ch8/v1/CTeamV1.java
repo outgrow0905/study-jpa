@@ -11,10 +11,11 @@ import java.util.List;
 @Entity
 public class CTeamV1 {
     @Id
+    @Column(name = "TEAM_ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
 
     @OneToMany(mappedBy = "team")
-    List<CMemberV1> members;
+    private List<CMemberV1> members;
 }

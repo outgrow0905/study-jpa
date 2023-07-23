@@ -16,20 +16,20 @@ jpql은 객체지향 쿼리이다.
 
 ~~~java
 @Test
-    void jpql1() {
-        template(manager -> {
-            List<CMemberV1> members = manager.createQuery(
-                    "select m from CMemberV1 m",
-                    CMemberV1.class
-            ).getResultList();
+void jpql1() {
+    template(manager -> {
+        List<CMemberV1> members = manager.createQuery(
+                "select m from CMemberV1 m",
+                CMemberV1.class
+        ).getResultList();
 
-            members.forEach(member -> {
-                log.info("id: {}", member.getId());
-                log.info("name: {}", member.getUsername());
-                log.info("age: {}", member.getAge());
-            });
+        members.forEach(member -> {
+            log.info("id: {}", member.getId());
+            log.info("name: {}", member.getUsername());
+            log.info("age: {}", member.getAge());
         });
-    }
+    });
+}
 ~~~
 
 만약 `select m`이 아닌 `select m.id, m.username`이라면 어떻게 될까?  
@@ -40,7 +40,6 @@ jpql은 객체지향 쿼리이다.
 ~~~java
 @Test
 void jpql2() {
-
     template(manager -> {
         List resultList = (List<CMemberV1>)manager.createQuery(
                 "select m.id, m.username from CMemberV1 m"
@@ -60,29 +59,29 @@ void jpql2() {
 아래의 테스트코드를 참고하자.
 
 ~~~java
-    @Test
-    void jpql3() {
-        template(manager -> {
-            CMemberV1 member1 = new CMemberV1();
-            member1.setUsername("name1");
-            member1.setAge(10);
-            manager.persist(member1);
+@Test
+void jpql3() {
+    template(manager -> {
+        CMemberV1 member1 = new CMemberV1();
+        member1.setUsername("name1");
+        member1.setAge(10);
+        manager.persist(member1);
 
-            CMemberV1 member2 = new CMemberV1();
-            member2.setUsername("name2");
-            member2.setAge(20);
-            manager.persist(member2);
-        });
+        CMemberV1 member2 = new CMemberV1();
+        member2.setUsername("name2");
+        member2.setAge(20);
+        manager.persist(member2);
+    });
 
-        template(manager -> {
-            assertThrows(NonUniqueResultException.class,
-                    () ->
-                    manager.createQuery(
-                    "select m from CMemberV1 m",
-                    CMemberV1.class
-            ).getSingleResult());
-        });
-    }
+    template(manager -> {
+        assertThrows(NonUniqueResultException.class,
+                () ->
+                manager.createQuery(
+                "select m from CMemberV1 m",
+                CMemberV1.class
+        ).getSingleResult());
+    });
+}
 ~~~
 
 간단한 파라미터 바인딩도 진행해보자.  

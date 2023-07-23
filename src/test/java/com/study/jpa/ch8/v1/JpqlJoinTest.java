@@ -256,7 +256,7 @@ class JpqlJoinTest {
             });
 
             assertEquals(teams.get(0), teams.get(1));
-            assertEquals(teams.get(0).members, teams.get(1).members);
+            assertEquals(teams.get(0).getMembers(), teams.get(1).getMembers());
         });
 
         template(manager -> {
