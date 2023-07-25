@@ -66,6 +66,7 @@
         <class>com.study.jpa.ch8.v1.CProductV1</class>
         <class>com.study.jpa.ch8.v1.CTeamV1</class>
         <class>com.study.jpa.ch8.v2.CMemberV2</class>
+        <class>com.study.jpa.ch9.v1.DMemberV1</class>
 
         <!-- app -->
         <class>com.study.jpa.app.v1.ItemV1</class>
