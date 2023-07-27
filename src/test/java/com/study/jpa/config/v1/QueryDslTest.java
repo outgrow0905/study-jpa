@@ -1,6 +1,11 @@
 package com.study.jpa.config.v1;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.study.jpa.app.v6.ItemV6;
+import com.study.jpa.app.v6.MovieV6;
+import com.study.jpa.app.v6.QItemV6;
 import com.study.jpa.ch9.v1.DMemberV1;
 import com.study.jpa.ch9.v1.QDMemberV1;
 import lombok.extern.slf4j.Slf4j;
@@ -55,6 +60,62 @@ class QueryDslTest {
                     .where(member1.username.eq("name1"))
                     .orderBy(member1.username.desc())
                     .stream().toList();
+        });
+    }
+
+    @Test
+    void queryDsl2() {
+        template(manager -> {
+            JPAQuery<ItemV6> query = new JPAQuery<>(manager);
+            QItemV6 item1 = new QItemV6("i");
+            List<ItemV6> items = query.from(item1)
+                    .where(item1.name.eq("item1")
+                            .and(item1.price.gt(2000))
+                            .and(item1.name.contains("luxury"))
+                            .and(item1.name.startsWith("it")))
+                    .stream().toList();
+        });
+    }
+
+    @Test
+    void queryDsl3() {
+        template(manager -> {
+            JPAQuery<ItemV6> query = new JPAQuery<>(manager);
+            QItemV6 item1 = new QItemV6("i");
+            List<ItemV6> items = query.from(item1)
+                    .where(item1.price.gt(2000))
+                    .orderBy(item1.price.desc(), item1.stockQuantity.asc())
+                    .offset(5).limit(10)
+                    .stream().toList();
+        });
+    }
+
+    @Test
+    void queryDsl4() {
+        template(manager -> {
+            JPAQuery<ItemV6> query = new JPAQuery<>(manager);
+            QItemV6 item1 = new QItemV6("i");
+            Long count = query.from(item1)
+                .select(item1.count())
+                .where(item1.price.gt(2000))
+                .orderBy(item1.price.desc(), item1.stockQuantity.asc())
+                .fetchOne();
+        });
+    }
+
+    @Test
+    void queryDsl5() {
+        template(manager -> {
+            JPAQueryFactory query = new JPAQueryFactory(manager);
+            QItemV6 item1 = new QItemV6("i");
+            List<Tuple> hello = query
+                    .select(item1.name, item1.price.min(), item1.createdTime.max(), item1.stockQuantity.avg())
+                    .from(item1)
+                    .where(item1.price.gt(2000))
+                    .groupBy(item1.name)
+                    .having(item1.name.contains("hello"))
+                    .orderBy(item1.name.desc())
+                    .fetch();
         });
     }
 }
