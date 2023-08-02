@@ -1,11 +1,14 @@
 package com.study.jpa.config.v1;
 
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.study.jpa.app.v6.ItemV6;
 import com.study.jpa.app.v6.MovieV6;
 import com.study.jpa.app.v6.QItemV6;
+import com.study.jpa.ch8.v1.*;
 import com.study.jpa.ch9.v1.DMemberV1;
 import com.study.jpa.ch9.v1.QDMemberV1;
 import lombok.extern.slf4j.Slf4j;
@@ -93,7 +96,7 @@ class QueryDslTest {
     @Test
     void queryDsl4() {
         template(manager -> {
-            JPAQuery<ItemV6> query = new JPAQuery<>(manager);
+            JPAQueryFactory query = new JPAQueryFactory(manager);
             QItemV6 item1 = new QItemV6("i");
             Long count = query.from(item1)
                 .select(item1.count())
@@ -118,4 +121,40 @@ class QueryDslTest {
                     .fetch();
         });
     }
+
+    @Test
+    void queryDsl6() {
+        template(manager -> {
+            QCMemberV1 member = QCMemberV1.cMemberV1;
+            QCOrderV1 order = QCOrderV1.cOrderV1;
+            QCProductV1 product = QCProductV1.cProductV1;
+
+            JPAQueryFactory query = new JPAQueryFactory(manager);
+            List<Tuple> orders = query.select(order, member)
+                    .from(order)
+                    .join(order.member, member)
+                    .leftJoin(order.product, product)
+                    .on(order.product.price.gt(100))
+                    .stream().toList();
+        });
+    }
+
+    @Test
+    void queryDslSubquery1() {
+        template(manager -> {
+            QCMemberV1 member = QCMemberV1.cMemberV1;
+            QCTeamV1 team = QCTeamV1.cTeamV1;
+
+            JPAQueryFactory query = new JPAQueryFactory(manager);
+            List<CTeamV1> teams = query.selectFrom(team)
+                    .where(team.members.contains(
+                            JPAExpressions
+                                    .selectFrom(member)
+                                    .where(member.age.gt(20))
+
+                    )).stream().toList();
+        });
+    }
+
+
 }

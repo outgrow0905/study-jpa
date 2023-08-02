@@ -60,3 +60,37 @@ query
 ~~~
 
 ![dsl5](img/dsl5.png)
+
+
+
+#### join
+querydsl은 `inner join`은 물론 `left joi`n 등 복잡한 조건까지 설정 가능하다.
+
+~~~java
+query.select(order, member)
+    .from(order)
+    .join(order.member, member)
+    .leftJoin(order.product, product)
+    .on(order.product.price.gt(100))
+    .stream().toList();
+~~~
+
+![dsl6](img/dsl6.png)
+
+
+
+#### 서브쿼리
+서브쿼리도 보고 넘어가자.
+
+~~~java
+query.selectFrom(team)
+    .where(team.members.contains(
+            JPAExpressions
+                    .selectFrom(member)
+                    .where(member.age.gt(20))
+
+    )).stream().toList();
+~~~
+
+![dsl7](img/dsl7.png)
+
