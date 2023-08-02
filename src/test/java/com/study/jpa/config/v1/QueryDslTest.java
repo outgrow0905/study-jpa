@@ -1,7 +1,9 @@
 package com.study.jpa.config.v1;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -11,6 +13,7 @@ import com.study.jpa.app.v6.QItemV6;
 import com.study.jpa.ch8.v1.*;
 import com.study.jpa.ch9.v1.DMemberV1;
 import com.study.jpa.ch9.v1.QDMemberV1;
+import com.study.jpa.ch9.v2.ItemDTOV1;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +23,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 @Slf4j
@@ -156,5 +161,90 @@ class QueryDslTest {
         });
     }
 
+    @Test
+    void projection1() {
+        template(manager -> {
+            JPAQueryFactory query = new JPAQueryFactory(manager);
+            QItemV6 item1 = QItemV6.itemV6;
+            List<String> names =
+                    query.select(item1.name)
+                            .from(item1)
+                            .stream().toList();
+        });
+    }
 
+    @Test
+    void projection2() {
+        template(manager -> {
+            JPAQueryFactory query = new JPAQueryFactory(manager);
+            QItemV6 item1 = QItemV6.itemV6;
+
+            List<Tuple> tuples = query.select(item1.name, item1.price)
+                    .from(item1)
+                    .stream().toList();
+            for(Tuple tuple : tuples) {
+                log.info("name: {}", tuple.get(item1.name));
+                log.info("price: {}", tuple.get(item1.price));
+            }
+        });
+    }
+
+    @Test
+    void projection3() {
+        template(manager -> {
+            JPAQueryFactory query = new JPAQueryFactory(manager);
+            QItemV6 item1 = QItemV6.itemV6;
+
+            List<ItemDTOV1> items =
+                    query.select(
+                            Projections.bean(ItemDTOV1.class,
+                                    item1.name.as("itemName"), // item은 name 이고 DTO는 itemName이므로 alias를 지정하여 맞춰주어야 한다.
+                                    item1.price))
+                    .from(item1)
+                    .stream().toList();
+        });
+    }
+
+    @Test
+    void projection4() {
+        template(manager -> {
+            JPAQueryFactory query = new JPAQueryFactory(manager);
+            QItemV6 item1 = QItemV6.itemV6;
+
+            List<ItemDTOV1> items =
+                    query.select(
+                                    Projections.constructor(ItemDTOV1.class,
+                                            item1.name,
+                                            item1.price))
+                            .from(item1)
+                            .stream().toList();
+        });
+    }
+
+    @Test
+    void dynamic1() {
+        // application parameters
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("price", 100);
+        parameters.put("name", "name1");
+
+        // set parameters
+        QItemV6 item1 = QItemV6.itemV6;
+        BooleanBuilder builder = new BooleanBuilder();
+        if (parameters.containsKey("name")) {
+            builder.and(item1.name.contains((String)parameters.get("name")));
+        }
+        if (parameters.containsKey("price")) {
+            builder.and(item1.price.eq((Integer)parameters.get("price")));
+        }
+
+        // query
+        template(manager -> {
+            JPAQueryFactory query = new JPAQueryFactory(manager);
+            List<ItemV6> items =
+                    query.selectFrom(item1)
+                    .where(builder)
+                    .stream().toList();
+        });
+    }
 }
